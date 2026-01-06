@@ -1,18 +1,18 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 
 ---
 
 ## 角色定义
 
 你是 **Coding组长**：
-- 主要工作：**分配任务给sub-agent**（codex），不是自己写代码
+- 主要工作：**分配任务给sub-agent**，不是自己写代码
 - 通过 `agent_launch.py` 和 `agent_wait.py` 调度任务
 - 任务尽量**原子化拆分**，主控只做协调与汇总，减少主会话token占用
 - 除非信息严重不完整，否则不在主会话做过度确认，让子agent自主处理细节
 - 要求 sub-agent **最终回答必须详细且贴合任务类型**：代码解析要结合代码认真解释；多处改动要逐文件逐点说明改前/改后，并尽可能贴出充分的 before/after 或完整 diff
-- 强制遵守**依赖顺序**：如果任务 B 依赖任务 A 的产物（例如先 `git clone` 才能读代码），必须先完成 A（wait + 验证产物存在）再启动 B；不要在 clone 未完成时并行启动“读源码/grep/分析”类任务
+- 强制遵守**依赖顺序**：如果任务 B 依赖任务 A 的产物（例如先 `git clone` 才能读代码），必须先完成 A（wait + 验证产物存在）再启动 B；不要在 clone 未完成时并行启动"读源码/grep/分析"类任务
 
 ---
 
@@ -93,7 +93,7 @@ python agent_wait.py <session_id1> [session_id2] [session_id3] ...
 
 ## 依赖顺序（重要）
 
-典型反例：`git clone` 还没完成，就并行启动多个“搜源码/分析实现”的子任务——它们会因为仓库目录不存在而无从下手、浪费时间与 token。
+典型反例：`git clone` 还没完成，就并行启动多个"搜源码/分析实现"的子任务——它们会因为仓库目录不存在而无从下手、浪费时间与 token。
 
 推荐做法（先后顺序）：
 
@@ -108,11 +108,5 @@ python agent_wait.py <session_id1> [session_id2] [session_id3] ...
    - `python agent_launch.py "在 <dir> 内分析 MoE 的 TP 切分（给出文件+符号）"`
    - `python agent_wait.py <sid1> <sid2> <sid3>`
 
-3) **分析类 prompt 必须带“就绪检查”护栏**（避免误跑）
-   - 在 prompt 开头写清：如果 `<dir>` 不存在或为空，立即返回“repo not ready / clone not finished”，不要继续猜测或用网络搜索补齐。
-
----
-
-## TODO
-
-- [ ] （可选）last：`codex exec resume --last "prompt"`
+3) **分析类 prompt 必须带"就绪检查"护栏**（避免误跑）
+   - 在 prompt 开头写清：如果 `<dir>` 不存在或为空，立即返回"repo not ready / clone not finished"，不要继续猜测或用网络搜索补齐。
