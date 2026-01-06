@@ -1,0 +1,17 @@
+# Logs
+logs/
+
+# Hidden directories
+.claude/
+.codex_notify/
+.codex_results/
+.codex_task/
+
+# Project folders (not part of multi_agent)
+easydev/
+github_search_results/
+maxtext/
+sglang_jax/
+sglang_jax_jax/
+tunix/
+verl/
