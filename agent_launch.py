@@ -9,6 +9,9 @@ LOGS.mkdir(exist_ok=True)
 
 _SID_RE = re.compile(r"session id: ([a-f0-9-]+)")
 
+# Worker prompt 文件路径，可通过环境变量覆盖
+WORKER_PROMPT_FILE = os.environ.get("WORKER_PROMPT_FILE", "prompts/WORKER.md")
+
 PROMPT_PREFIX = """\
 输出要求（只约束最终回答）：
 - 不要输出思维链/内心推理。
@@ -38,7 +41,12 @@ def _get_agent():
     return AGENTS[name]
 
 def _wrap_prompt(user_prompt: str) -> str:
-    return f"{PROMPT_PREFIX}\n\n用户任务：\n{user_prompt}\n"
+    worker_instruction = ""
+    worker_file = ROOT / WORKER_PROMPT_FILE
+    if worker_file.exists():
+        worker_instruction = f"【重要】执行任务前，请先阅读 {WORKER_PROMPT_FILE} 文件了解执行规范。\n"
+        worker_instruction += "如果 sop/ 目录下有与当前任务相关的 SOP 文件，请先阅读并遵循。\n\n"
+    return f"{worker_instruction}{PROMPT_PREFIX}\n\n用户任务：\n{user_prompt}\n"
 
 def launch(prompt: str) -> dict:
     agent = _get_agent()
