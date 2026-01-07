@@ -3,7 +3,7 @@
 import sys, time, os, json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parent.parent  # 项目根目录
 LOGS = ROOT / "logs"
 MAX_WAIT = 600  # 10分钟
 
