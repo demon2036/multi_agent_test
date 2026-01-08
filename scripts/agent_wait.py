@@ -3,8 +3,9 @@
 import sys, time, os, json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent  # 项目根目录
-LOGS = ROOT / "logs"
+# Import from agent package
+from agent.config import ROOT, LOGS, META_DIR
+
 MAX_WAIT = 600  # 10分钟
 
 def pid_alive(pid: int) -> bool:
@@ -15,7 +16,7 @@ def pid_alive(pid: int) -> bool:
         return False
 
 def get_status(session_id: str) -> dict:
-    pid_file = LOGS / f"{session_id}.pid"
+    pid_file = META_DIR / f"{session_id}.pid"
     log_file = LOGS / f"{session_id}.log"
 
     if not pid_file.exists():
